@@ -1,6 +1,5 @@
-import { useEffect, useState } from "react";
+import { useEffect, useState, useRef } from "react";
 import { useNavigate } from "react-router-dom";
-import gsap from "gsap";
 // import logo from "../assets/images/Logo.png";
 
 import paintingImg from "../assets/images/artist-types/paintings.jpg";
@@ -69,6 +68,7 @@ export default function ArtistTypeScrollPage() {
 
   const [activeIndex, setActiveIndex] = useState(0);
   const [touchStartX, setTouchStartX] = useState(null);
+  const lastScrollTimeRef = useRef(0);
 
   const nextArtist = () => {
     setActiveIndex((i) => Math.min(i + 1, artistTypes.length - 1));
@@ -102,14 +102,35 @@ export default function ArtistTypeScrollPage() {
 
   useEffect(() => {
     const onWheel = (e) => {
-      if (e.deltaY > 0) {
-        setActiveIndex((i) =>
-          Math.min(i + 1, artistTypes.length - 1)
-        );
-      } else {
-        setActiveIndex((i) =>
-          Math.max(i - 1, 0)
-        );
+      const now = Date.now();
+      const throttleDelay = 500; // Increased throttle to 500ms per action
+
+      // Only process if enough time has passed since last action
+      if (now - lastScrollTimeRef.current < throttleDelay) {
+        return;
+      }
+
+      // Listen for horizontal scroll (deltaX) for left/right navigation
+      if (Math.abs(e.deltaX) > Math.abs(e.deltaY)) {
+        // Horizontal scroll detected
+        if (e.deltaX > 0) {
+          // Scrolling right → next
+          setActiveIndex((i) => Math.min(i + 1, artistTypes.length - 1));
+          lastScrollTimeRef.current = now;
+        } else if (e.deltaX < 0) {
+          // Scrolling left → previous
+          setActiveIndex((i) => Math.max(i - 1, 0));
+          lastScrollTimeRef.current = now;
+        }
+      } else if (e.deltaY !== 0) {
+        // Fallback: vertical scroll for up/down navigation
+        if (e.deltaY > 0) {
+          setActiveIndex((i) => Math.min(i + 1, artistTypes.length - 1));
+          lastScrollTimeRef.current = now;
+        } else {
+          setActiveIndex((i) => Math.max(i - 1, 0));
+          lastScrollTimeRef.current = now;
+        }
       }
     };
 
@@ -127,7 +148,7 @@ export default function ArtistTypeScrollPage() {
       }
     };
 
-    window.addEventListener("wheel", onWheel);
+    window.addEventListener("wheel", onWheel, { passive: true });
     window.addEventListener("keydown", onKeyDown);
 
     return () => {
@@ -135,14 +156,6 @@ export default function ArtistTypeScrollPage() {
       window.removeEventListener("keydown", onKeyDown);
     };
   }, []);
-  useEffect(() => {
-    // Animate center circle images
-    gsap.fromTo(
-      ".artist-text",
-      { y: -50, opacity: 0 },   // top se start
-      { y: 0, opacity: 1, duration: 0.6, ease: "power2.out" }
-    );
-  }, [activeIndex]);
 
   return (
     <div
@@ -227,41 +240,20 @@ export default function ArtistTypeScrollPage() {
 
         {/* RIGHT PANEL */}
         <div className="flex flex-col justify-start items-center gap-4 mt-8 px-4 sm:px-6 md:px-8 w-full">
-          <h2 className="artist-text text-xl sm:text-2xl md:text-3xl lg:text-4xl font-semibold leading-relaxed text-center">
+          <h2 className="text-xl sm:text-2xl md:text-3xl lg:text-4xl font-semibold leading-relaxed text-center">
             {artistTypes[activeIndex].label}
           </h2>
-          <p className="artist-text text-sm text-gray-300 leading-relaxed text-center max-w-3xl">
+          <p className="text-sm text-gray-300 leading-relaxed text-center max-w-3xl">
             {artistTypes[activeIndex].description}
           </p>
         </div>
 
-        {/* COUNTER + ARROWS */}
+        {/* COUNTER */}
         <div className="absolute bottom-6 right-10 z-50 flex flex-col items-end gap-3">
 
           {/* Number */}
           <div className="text-sm tracking-widest text-white">
             {String(activeIndex + 1).padStart(2, "0")} / {String(artistTypes.length).padStart(2, "0")}
-          </div>
-
-          {/* Arrows */}
-          <div className="flex gap-4">
-
-            <button
-              onClick={prevArtist}
-              disabled={activeIndex === 0}
-              className="w-9 h-9 flex items-center justify-center border border-white/40 rounded-full text-white hover:bg-white hover:text-black transition disabled:opacity-30 disabled:cursor-not-allowed"
-            >
-              ←
-            </button>
-
-            <button
-              onClick={nextArtist}
-              disabled={activeIndex === artistTypes.length - 1}
-              className="w-9 h-9 flex items-center justify-center border border-white/40 rounded-full text-white hover:bg-white hover:text-black transition disabled:opacity-30 disabled:cursor-not-allowed"
-            >
-              →
-            </button>
-
           </div>
 
         </div>

@@ -1,5 +1,5 @@
 import { useParams, useNavigate } from "react-router-dom";
-import { useEffect, useMemo, useState, useCallback } from "react";
+import { useEffect, useMemo, useState, useCallback, useRef } from "react";
 
 import artistsData from "../data/artists";
 import artworkMeta from "../data/artworkMeta";
@@ -10,6 +10,7 @@ export default function ArtistsPage() {
   const { type } = useParams();
   const navigate = useNavigate();
   const [activeIndex, setActiveIndex] = useState(0);
+  const lastScrollTimeRef = useRef(0);
 
   const artists = useMemo(() => {
     if (!type) return [];
@@ -41,8 +42,36 @@ export default function ArtistsPage() {
     if (!artists.length) return;
 
     const onWheel = (e) => {
-      if (e.deltaY > 0) nextArtist();
-      else prevArtist();
+      const now = Date.now();
+      const throttleDelay = 500; // Increased throttle to 500ms per action
+
+      // Only process if enough time has passed since last action
+      if (now - lastScrollTimeRef.current < throttleDelay) {
+        return;
+      }
+
+      // Listen for horizontal scroll (deltaX) for left/right navigation
+      if (Math.abs(e.deltaX) > Math.abs(e.deltaY)) {
+        // Horizontal scroll detected
+        if (e.deltaX > 0) {
+          // Scrolling right → next
+          setActiveIndex((prev) => Math.min(prev + 1, artists.length - 1));
+          lastScrollTimeRef.current = now;
+        } else if (e.deltaX < 0) {
+          // Scrolling left → previous
+          setActiveIndex((prev) => Math.max(prev - 1, 0));
+          lastScrollTimeRef.current = now;
+        }
+      } else if (e.deltaY !== 0) {
+        // Fallback: vertical scroll for up/down navigation
+        if (e.deltaY > 0) {
+          setActiveIndex((prev) => Math.min(prev + 1, artists.length - 1));
+          lastScrollTimeRef.current = now;
+        } else {
+          setActiveIndex((prev) => Math.max(prev - 1, 0));
+          lastScrollTimeRef.current = now;
+        }
+      }
     };
 
     const onKeyDown = (e) => {
@@ -50,14 +79,14 @@ export default function ArtistsPage() {
       if (e.key === "ArrowLeft") prevArtist();
     };
 
-    window.addEventListener("wheel", onWheel);
+    window.addEventListener("wheel", onWheel, { passive: true });
     window.addEventListener("keydown", onKeyDown);
 
     return () => {
       window.removeEventListener("wheel", onWheel);
       window.removeEventListener("keydown", onKeyDown);
     };
-  }, [artists, nextArtist, prevArtist]);
+  }, [artists.length, nextArtist, prevArtist]);
 
   // ----------------------------
   // 📱 Touch Swipe Handling
@@ -138,33 +167,12 @@ export default function ArtistsPage() {
         <img src={Logo} alt="Ziggratts" className="w-20 opacity-90" />
       </div> */}
 
-      {/* Artist Counter + Arrows */}
+      {/* Artist Counter */}
       <div className="absolute top-6 right-10 z-30 flex flex-col items-end gap-3">
 
         {/* Counter */}
         <div className="text-sm text-gray-300 tracking-widest">
           {String(activeIndex + 1).padStart(2, "0")} / {String(artists.length).padStart(2, "0")}
-        </div>
-
-        {/* Arrows */}
-        <div className="flex gap-3">
-
-          <button
-            onClick={prevArtist}
-            disabled={activeIndex === 0}
-            className="w-8 h-8 flex items-center justify-center border border-white/40 rounded-full text-white hover:bg-white hover:text-black transition disabled:opacity-30 disabled:cursor-not-allowed"
-          >
-            ←
-          </button>
-
-          <button
-            onClick={nextArtist}
-            disabled={activeIndex === artists.length - 1}
-            className="w-8 h-8 flex items-center justify-center border border-white/40 rounded-full text-white hover:bg-white hover:text-black transition disabled:opacity-30 disabled:cursor-not-allowed"
-          >
-            →
-          </button>
-
         </div>
 
       </div>
