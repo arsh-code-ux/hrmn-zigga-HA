@@ -12,7 +12,7 @@ import drawingsImg from "../assets/images/artist-types/drawings.jpg";
 
 const artistTypes = [
   {
-    label: "Digital Artist",
+    label: "Digital Artwork",
     slug: "digital",
     image: digitalImg,
     // image: require("../assets/images/artist-types/digital.jpg"),
@@ -159,7 +159,7 @@ export default function ArtistTypeScrollPage() {
 
   return (
     <div
-      className="relative w-screen h-[100svh] overflow-hidden bg-black text-white"
+      className="relative w-full h-screen overflow-hidden bg-black text-white"
       onTouchStart={handleTouchStart}
       onTouchEnd={handleTouchEnd}
     >
@@ -201,7 +201,7 @@ export default function ArtistTypeScrollPage() {
           mt-20 md:mt-0
           lg:items-center lg:justify-center"
         >
-          <div className="relative w-full h-[500px]">
+          <div className="relative w-full h-[650px]">
             {artistTypes.map((type, index) => {
               const offset = index - activeIndex;
               const x = offset * 190;
@@ -216,8 +216,9 @@ export default function ArtistTypeScrollPage() {
                   onClick={() =>
                     offset === 0 && navigate(`/artists/${type.slug}`)
                   }
-                  className="absolute left-1/2 top-[60%] -translate-x-1/2 -translate-y-1/2 transition-all duration-500 ease-out cursor-pointer"
+                  className="absolute left-1/2 -translate-x-1/2 -translate-y-1/2 transition-all duration-500 ease-out cursor-pointer"
                   style={{
+                    top: "calc(110% + 120px)",
                     transform: `translate(${x}px, ${y}px) scale(${scale})`,
                     opacity,
                     zIndex: 10 - Math.abs(offset),

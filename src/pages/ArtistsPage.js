@@ -180,71 +180,93 @@ export default function ArtistsPage() {
       {/* Layout */}
       <div className="relative z-20 h-full w-full
   flex flex-col md:flex-col lg:flex-row
-  lg:grid lg:grid-cols-3
-  gap-4 lg:gap-6
-  px-4 lg:px-6
-  overflow-hidden">
+  lg:grid lg:grid-cols-[0.9fr_1.3fr_1.3fr]
+  gap-4 lg:gap-8
+  px-4 lg:px-8
+  overflow-hidden"
+      style={{ height: 'calc(100vh - 0px)', overflow: 'hidden' }}>
 
-        {/* LEFT - Info Panel - 25% width */}
+
+        {/* LEFT - Info Panel - 33% width */}
         <div className="
-flex-shrink-0 lg:w-1/4
+flex-shrink-0
 flex flex-col 
 justify-center
-gap-6
+items-start
+gap-4
 text-left
-px-0
-h-full overflow-y-auto hide-scrollbar
-min-w-0
+px-3 lg:px-6 py-3
+h-full overflow-y-auto overflow-x-hidden
+w-full
 order-1 lg:order-1
-">
+"
+        style={{ overflow: 'hidden' }}>
           {/* Back Button */}
           <button
             onClick={() => navigate("/")}
-            className="flex items-center gap-1 text-sm text-yellow-400 hover:text-yellow-300 transition cursor-pointer w-fit"
+            className="flex items-center gap-1 text-lg text-yellow-400 hover:text-yellow-300 transition cursor-pointer font-black self-start"
           >
             ← Back
           </button>
 
-          <div>
-            <h1 className="text-4xl font-bold transition-all duration-500 mb-2">
+          {/* Artist Name & Type */}
+          <div className="space-y-2 w-full">
+            <h1 className="text-5xl font-black transition-all duration-500 leading-tight tracking-tight">
               {activeArtist.name}
             </h1>
-            <p className="text-sm text-yellow-400 capitalize font-semibold">
-              {type}
+            <p className="text-lg text-yellow-400 capitalize font-bold">
+              {type.toUpperCase()}
             </p>
-            <div className="text-sm text-gray-300 mt-2">
-              {activeArtist.location && (() => {
+          </div>
+
+          {/* Location */}
+          {activeArtist.location && (
+            <div className="space-y-2 border-t border-gray-700 pt-3 w-full">
+              <h3 className="text-sm font-black text-yellow-400 uppercase">LOCATION</h3>
+              {(() => {
                 const [city, country] = activeArtist.location.split(", ");
                 return (
-                  <>
-                    <p className="text-sm">{country}</p>
-                    <p className="text-sm">{city}</p>
-                  </>
+                  <div className="text-sm text-gray-300 leading-relaxed">
+                    <p>{city}</p>
+                    <p>{country}</p>
+                  </div>
                 );
               })()}
             </div>
-          </div>
+          )}
 
           {/* About the Artist */}
-          <div className="pt-6 border-t-2 border-gray-500 hide-scrollbar">
-            <h3 className="text-2xl font-bold text-yellow-400 mb-4">
-              About the Artist
-            </h3>
-            <p className="text-sm text-gray-300 leading-relaxed">
+          <div className="space-y-2 border-t border-gray-700 pt-3 w-full">
+            <h3 className="text-sm font-black text-yellow-400 uppercase">About Artist</h3>
+            <p className="text-xs text-gray-300 leading-relaxed font-medium">
               {activeArtist.bio}
             </p>
           </div>
+
+          {/* Education */}
+          {activeArtist.education && (
+            <div className="space-y-2 border-t border-gray-700 pt-3 w-full">
+              <h3 className="text-sm font-black text-yellow-400 uppercase">EDUCATION</h3>
+              <p className="text-xs text-gray-300 leading-relaxed font-medium">
+                {activeArtist.education}
+              </p>
+            </div>
+          )}
+
+
         </div>
 
-        {/* CENTER - Main Image Area - 50% width */}
+        {/* CENTER - Main Image Area - 33% width */}
         <div className="
-  flex-1 lg:w-1/2
-  flex items-center justify-center 
+  flex-1 lg:w-1/3
+  flex items-end justify-center 
   order-2 lg:order-2
-  h-96 md:h-96 lg:h-full
+  h-96 md:h-96 lg:h-[calc(100%-160px)]
   min-w-0
   relative
-">
+  pb-20
+  overflow-hidden"
+        >
           {artists.map((artist, index) => {
             const offset = index - activeIndex;
             const isActive = offset === 0;
@@ -253,7 +275,7 @@ order-1 lg:order-1
               <div
                 key={artist.id}
                 onClick={() =>
-                  isActive && navigate(`/collections/${artist.slug}`)
+                  isActive && navigate("/")
                 }
                 className="absolute transition-all duration-700 ease-out cursor-pointer"
                 style={{
@@ -285,20 +307,22 @@ order-1 lg:order-1
             );
           })}
         </div>
-        {/* RIGHT - Artwork Details - 25% width */}
+        {/* RIGHT - Artwork Details - 33% width */}
         <div className="
-  flex-shrink-0 lg:w-1/4
+  flex-shrink-0
   flex flex-col 
   justify-center
-  gap-3
-  text-xs
+  items-start
+  gap-4
+  text-sm
   text-gray-200
   transition-all duration-500
   text-left
-  h-full overflow-y-auto px-0 hide-scrollbar
-  min-w-0
+  h-full overflow-y-auto overflow-x-hidden px-3 lg:px-6 py-3
+  w-full
   order-3 lg:order-3
-">
+"
+        style={{ overflow: 'hidden' }}>
           {/* About The Artwork */}
           {artworkMeta[activeArtist.slug] && (() => {
             const artworkSlug = Object.keys(artworkMeta[activeArtist.slug])[0];
@@ -308,85 +332,197 @@ order-1 lg:order-1
               : artwork;
 
             return (
-              <div>
-                <h4 className="text-sm font-bold text-yellow-400 mb-2">
-                  About The Artwork
-                </h4>
-                <p className="text-xs text-gray-300 leading-relaxed font-normal mb-1">
-                  {artworkDetails.title || "Untitled"}
-                </p>
-                {artworkDetails.description && (
-                  <p className="text-xs text-gray-300 leading-relaxed mt-2">
-                    {artworkDetails.description}
+              <div className="space-y-3 w-full">
+                {/* Title */}
+                <div className="space-y-2 w-full">
+                  <h3 className="text-sm font-black text-yellow-400 uppercase">TITLE</h3>
+                  <p className="text-xs text-gray-300 leading-relaxed font-medium">
+                    {artworkDetails.title || "Untitled"}
                   </p>
+                </div>
+
+                {/* Description */}
+                {artworkDetails.description && (
+                  <div className="space-y-2 border-t border-gray-700 pt-3 w-full">
+                    <h3 className="text-sm font-black text-yellow-400 uppercase">DESC</h3>
+                    <p className="text-xs text-gray-300 leading-relaxed font-medium">
+                      {artworkDetails.description}
+                    </p>
+                  </div>
                 )}
 
                 {/* Artwork Details */}
-                <div className="pt-3 border-t-2 border-gray-500 mt-3">
-                  <h3 className="text-sm font-bold text-yellow-400 mb-2">
-                    Artwork Details
-                  </h3>
-                  
-                  <div className="space-y-0.5 text-xs text-gray-300">
-                    {artworkDetails.category && (
-                      <div className="flex justify-between items-start gap-1">
-                        <span className="font-semibold whitespace-nowrap text-xs">Category</span>
-                        <span className="text-gray-400 text-right break-words text-xs">{artworkDetails.category}</span>
-                      </div>
-                    )}
-                    {artworkDetails.style && (
-                      <div className="flex justify-between items-start gap-1">
-                        <span className="font-semibold whitespace-nowrap text-xs">Style</span>
-                        <span className="text-gray-400 text-right break-words text-xs">{artworkDetails.style}</span>
-                      </div>
-                    )}
-                    {artworkDetails.techniques && (
-                      <div className="flex justify-between items-start gap-1">
-                        <span className="font-semibold whitespace-nowrap text-xs">Techniques</span>
-                        <span className="text-gray-400 text-right break-words text-xs">{artworkDetails.techniques}</span>
-                      </div>
-                    )}
-                    {artworkDetails.size && (
-                      <div className="flex justify-between items-start gap-1">
-                        <span className="font-semibold whitespace-nowrap text-xs">Size (WxH)</span>
-                        <span className="text-gray-400 text-right break-words text-xs">{artworkDetails.size}</span>
-                      </div>
-                    )}
-                    {artworkDetails.material && (
-                      <div className="flex justify-between items-start gap-1">
-                        <span className="font-semibold whitespace-nowrap text-xs">Material used</span>
-                        <span className="text-gray-400 text-right break-words text-xs">{artworkDetails.material}</span>
-                      </div>
-                    )}
-                    {artworkDetails.medium && (
-                      <div className="flex justify-between items-start gap-1">
-                        <span className="font-semibold whitespace-nowrap text-xs">Medium</span>
-                        <span className="text-gray-400 text-right break-words text-xs">{artworkDetails.medium}</span>
-                      </div>
-                    )}
-                    {artworkDetails.sellingOptions && (
-                      <div className="flex justify-between items-start gap-1">
-                        <span className="font-semibold whitespace-nowrap text-xs">Selling Options</span>
-                        <span className="text-gray-400 text-right break-words text-xs">{artworkDetails.sellingOptions}</span>
-                      </div>
-                    )}
-                    {artworkDetails.year && (
-                      <div className="flex justify-between items-start gap-1">
-                        <span className="font-semibold whitespace-nowrap text-xs">Year of art work</span>
-                        <span className="text-gray-400 text-right break-words text-xs">{artworkDetails.year}</span>
-                      </div>
-                    )}
-                    {artworkDetails.deliveredAs && (
-                      <div className="flex justify-between items-start gap-1">
-                        <span className="font-semibold whitespace-nowrap text-xs">Artwork will be delivered as</span>
-                        <span className="text-gray-400 text-right break-words text-xs">{artworkDetails.deliveredAs}</span>
-                      </div>
-                    )}
+                {(artworkDetails.category || artworkDetails.style || artworkDetails.techniques || artworkDetails.material) && (
+                  <div className="space-y-2 border-t border-gray-700 pt-3 w-full">
+                    <h3 className="text-sm font-black text-yellow-400 uppercase">DETAILS</h3>
+                    
+                    <div className="space-y-2 text-xs text-gray-300 font-medium">
+                      {artworkDetails.category && (
+                        <div className="flex justify-between gap-3">
+                          <span className="font-semibold whitespace-nowrap">Category:</span>
+                          <span className="text-right">{artworkDetails.category}</span>
+                        </div>
+                      )}
+                      {artworkDetails.style && (
+                        <div className="flex justify-between gap-3">
+                          <span className="font-semibold whitespace-nowrap">Style:</span>
+                          <span className="text-right">{artworkDetails.style}</span>
+                        </div>
+                      )}
+                      {artworkDetails.techniques && (
+                        <div className="flex justify-between gap-3">
+                          <span className="font-semibold whitespace-nowrap">Techniques:</span>
+                          <span className="text-right">{artworkDetails.techniques}</span>
+                        </div>
+                      )}
+                      {artworkDetails.material && (
+                        <div className="flex justify-between gap-3">
+                          <span className="font-semibold whitespace-nowrap">Material:</span>
+                          <span className="text-right">{artworkDetails.material}</span>
+                        </div>
+                      )}
+                      {artworkDetails.medium && (
+                        <div className="flex justify-between gap-3">
+                          <span className="font-semibold whitespace-nowrap">Medium:</span>
+                          <span className="text-right">{artworkDetails.medium}</span>
+                        </div>
+                      )}
+                    </div>
                   </div>
-                </div>
+                )}
+
+                {/* Specifications */}
+                {(artworkDetails.size || artworkDetails.year) && (
+                  <div className="space-y-2 border-t border-gray-700 pt-3 w-full">
+                    <h3 className="text-sm font-black text-yellow-400 uppercase">SPECS</h3>
+                    
+                    <div className="space-y-2 text-xs text-gray-300 font-medium">
+                      {artworkDetails.size && (
+                        <div className="flex justify-between gap-3">
+                          <span className="font-semibold whitespace-nowrap">Size:</span>
+                          <span className="text-right text-xs">{artworkDetails.size}</span>
+                        </div>
+                      )}
+                      {artworkDetails.year && (
+                        <div className="flex justify-between gap-3">
+                          <span className="font-semibold whitespace-nowrap">Year:</span>
+                          <span className="text-right text-xs">{artworkDetails.year}</span>
+                        </div>
+                      )}
+                    </div>
+                  </div>
+                )}
+
+                {/* Selling Info */}
+                {(artworkDetails.sellingOptions || artworkDetails.deliveredAs) && (
+                  <div className="space-y-2 border-t border-gray-700 pt-3 w-full">
+                    <h3 className="text-sm font-black text-yellow-400 uppercase">SELL</h3>
+                    
+                    <div className="space-y-2 text-xs text-gray-300 font-medium">
+                      {artworkDetails.sellingOptions && (
+                        <div className="flex justify-between gap-3">
+                          <span className="font-semibold whitespace-nowrap">Options:</span>
+                          <span className="text-right">{artworkDetails.sellingOptions}</span>
+                        </div>
+                      )}
+                      {artworkDetails.deliveredAs && (
+                        <div className="flex justify-between gap-3">
+                          <span className="font-semibold whitespace-nowrap">Delivered:</span>
+                          <span className="text-right">{artworkDetails.deliveredAs}</span>
+                        </div>
+                      )}
+                    </div>
+                  </div>
+                )}
               </div>
             );
-          })()}
+          })() || (
+            <div className="text-xs text-gray-300 space-y-3 w-full font-medium">
+              {/* Artist Overview */}
+              <div className="space-y-2">
+                <h3 className="text-sm font-black text-yellow-400 uppercase">OVERVIEW</h3>
+                <p className="text-xs leading-relaxed">
+                  {activeArtist.name} is a dedicated {type} artist.
+                </p>
+              </div>
+
+              {/* Art Philosophy */}
+              <div className="space-y-2 border-t border-gray-700 pt-3">
+                <h3 className="text-sm font-black text-yellow-400 uppercase">VISION</h3>
+                <p className="text-xs leading-relaxed">
+                  {activeArtist.bio}
+                </p>
+              </div>
+
+              {/* Experience */}
+              {activeArtist.experience && (
+                <div className="space-y-2 border-t border-gray-700 pt-3">
+                  <h3 className="text-sm font-black text-yellow-400 uppercase">EXPERIENCE</h3>
+                  <p className="text-xs leading-relaxed">
+                    {activeArtist.experience}
+                  </p>
+                </div>
+              )}
+
+              {/* Style */}
+              {activeArtist.style && (
+                <div className="space-y-2 border-t border-gray-700 pt-3">
+                  <h3 className="text-sm font-black text-yellow-400 uppercase">STYLE</h3>
+                  <p className="text-xs leading-relaxed">
+                    {activeArtist.style}
+                  </p>
+                </div>
+              )}
+
+              {/* Specialization */}
+              {activeArtist.specialization && (
+                <div className="space-y-2 border-t border-gray-700 pt-3">
+                  <h3 className="text-sm font-black text-yellow-400 uppercase">SPECIAL</h3>
+                  <p className="text-xs leading-relaxed">
+                    {activeArtist.specialization}
+                  </p>
+                </div>
+              )}
+
+              {/* Career Highlights */}
+              {activeArtist.careerHighlights && (
+                <div className="space-y-2 border-t border-gray-700 pt-3">
+                  <h3 className="text-sm font-bold text-yellow-400 uppercase">CAREER HIGHLIGHTS</h3>
+                  <p className="text-xs leading-relaxed">
+                    {activeArtist.careerHighlights}
+                  </p>
+                </div>
+              )}
+
+              {/* Category Details */}
+              <div className="space-y-2 border-t border-gray-700 pt-3">
+                <h3 className="text-sm font-black text-yellow-400 uppercase">CATEGORY</h3>
+                <div className="space-y-2 text-xs">
+                  <div className="flex justify-between gap-3">
+                    <span className="font-semibold">Type:</span>
+                    <span className="text-right capitalize">{type}</span>
+                  </div>
+                  {activeArtist.specialization && (
+                    <div className="flex justify-between gap-3 text-xs">
+                      <span className="font-semibold">Type:</span>
+                      <span className="text-right">{activeArtist.specialization.split(",")[0]}</span>
+                    </div>
+                  )}
+                </div>
+              </div>
+
+              {/* Default Info if no specific data */}
+              {/* Default Info if no specific data */}
+              {!activeArtist.awards && (
+                <div className="space-y-2 border-t border-gray-700 pt-3 pb-3">
+                  <h3 className="text-sm font-bold text-yellow-400 uppercase">ARTIST COLLECTION</h3>
+                  <p className="text-xs leading-relaxed">
+                    Explore the diverse collection of artworks by {activeArtist.name}. Each piece represents a unique perspective and artistic journey in the {type} category.
+                  </p>
+                </div>
+              )}
+            </div>
+          )}
         </div>
 
       </div>

@@ -37,6 +37,20 @@
   }
 }
 
+/* App Content Wrapper - With navbar on all pages */
+.app-content {
+  margin-top: 70px;
+  height: calc(100vh - 70px);
+  overflow: hidden;
+}
+
+@media (max-width: 768px) {
+  .app-content {
+    margin-top: 60px;
+    height: calc(100vh - 60px);
+  }
+}
+
 /* Hide scrollbars but keep functionality */
 .hide-scrollbar {
   -ms-overflow-style: none;
