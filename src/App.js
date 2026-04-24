@@ -1,11 +1,11 @@
-import { BrowserRouter as Router, Routes, Route, useLocation } from "react-router-dom";
+import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
 import Navbar from "./components/Navbar";
 import ArtistTypeScrollPage from "./pages/ArtistTypeScrollPage";
 import ArtistsPage from "./pages/ArtistsPage";
 import "./App.css";
 
 function AppContent() {
-  const location = useLocation();
+  
 
   return (
     <>

@@ -324,7 +324,7 @@ order-1 lg:order-1
 "
         style={{ overflow: 'hidden' }}>
           {/* About The Artwork */}
-          {artworkMeta[activeArtist.slug] && (() => {
+            {(artworkMeta[activeArtist.slug] && (() => {
             const artworkSlug = Object.keys(artworkMeta[activeArtist.slug])[0];
             const artwork = artworkMeta[activeArtist.slug][artworkSlug];
             const artworkDetails = typeof artwork === 'string' 
@@ -352,7 +352,7 @@ order-1 lg:order-1
                 )}
 
                 {/* Artwork Details */}
-                {(artworkDetails.category || artworkDetails.style || artworkDetails.techniques || artworkDetails.material) && (
+                  {((artworkDetails.category || artworkDetails.style || artworkDetails.techniques || artworkDetails.material) ) && (
                   <div className="space-y-2 border-t border-gray-700 pt-3 w-full">
                     <h3 className="text-sm font-black text-yellow-400 uppercase">DETAILS</h3>
                     
@@ -436,7 +436,7 @@ order-1 lg:order-1
                 )}
               </div>
             );
-          })() || (
+            })()) || (
             <div className="text-xs text-gray-300 space-y-3 w-full font-medium">
               {/* Artist Overview */}
               <div className="space-y-2">
