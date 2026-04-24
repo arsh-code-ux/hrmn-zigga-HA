@@ -199,13 +199,23 @@ export default function ArtistTypeScrollPage() {
 
   return (
     <div
-      className="relative w-screen h-[100svh] overflow-hidden bg-black text-white"
+      className="relative w-full min-h-screen md:h-screen overflow-x-hidden bg-black text-white"
       onTouchStart={handleTouchStart}
       onTouchEnd={handleTouchEnd}
     >
 
-      {/* BACKGROUND */}
-      <div className="absolute inset-0 z-0 overflow-hidden">
+      {/* MOBILE BACKGROUND - Top portion only */}
+      <div className="md:hidden absolute top-0 left-0 right-0 h-40 z-0 overflow-hidden">
+        <img
+          src={artistTypes[activeIndex].image}
+          alt="background-blur"
+          className="absolute inset-0 w-full h-full object-cover blur-md opacity-60"
+        />
+        <div className="absolute inset-0 bg-gradient-to-b from-transparent via-black/50 to-black" />
+      </div>
+
+      {/* DESKTOP BACKGROUND - Full screen */}
+      <div className="hidden md:block absolute inset-0 z-0 overflow-hidden">
         <img
           src={artistTypes[activeIndex].image}
           alt="background-blur"
@@ -216,18 +226,98 @@ export default function ArtistTypeScrollPage() {
           alt="background"
           className="absolute inset-0 w-full h-full object-contain"
         />
+        <div className="absolute inset-0 bg-gradient-to-r from-black/70 via-black/60 to-black/80" />
       </div>
 
-      {/* Stronger Right Gradient */}
-      <div className="absolute inset-0 bg-gradient-to-r from-black/70 via-black/60 to-black/80 z-10" />
+      {/* MOBILE GRADIENT OVERLAY */}
+      <div className="md:hidden absolute top-0 left-0 right-0 h-full bg-gradient-to-b from-black/20 via-black/60 to-black z-5 pointer-events-none" />
 
       {/* LOGO – TOP LEFT */}
       {/* <div className="absolute top-6 left-6 z-20">
         <img src={logo} alt="Ziggratus" className="w-28 opacity-90" />
       </div> */}
 
-      {/* LAYOUT */}
-      <div className="relative z-10 h-full grid grid-cols-1 md:grid-cols-[1fr_2fr_1fr] px-4 md:px-10">
+      {/* COUNTER - Top Right */}
+      <div className="absolute top-4 md:top-6 right-4 md:right-10 z-50 flex flex-col items-end">
+        <div className="text-xs md:text-sm text-white tracking-widest font-bold bg-black/40 px-3 py-1 rounded-full">
+          {String(activeIndex + 1).padStart(2, "0")} / {String(artistTypes.length).padStart(2, "0")}
+        </div>
+      </div>
+
+      {/* MOBILE LAYOUT - VERTICAL STACKING */}
+      <div className="md:hidden relative z-10 w-full min-h-screen pt-32 pb-6 px-4 flex flex-col gap-6">
+        {/* Title */}
+        <div className="space-y-2 text-center">
+          <h2 className="text-3xl font-black">{artistTypes[activeIndex].label}</h2>
+          <p className="text-xs text-yellow-400 font-bold uppercase tracking-wider">{artistTypes[activeIndex].type}</p>
+        </div>
+
+        {/* Main Image Circle */}
+        <div className="flex justify-center">
+          <div className="w-40 h-40 rounded-full overflow-hidden border-4 border-yellow-400 shadow-lg shadow-yellow-400/50">
+            <img src={artistTypes[activeIndex].image} alt={artistTypes[activeIndex].label} className="w-full h-full object-cover" />
+          </div>
+        </div>
+
+        {/* Description */}
+        <div className="space-y-2">
+          <h3 className="text-xs font-black text-yellow-400 uppercase">What is it?</h3>
+          <p className="text-xs text-gray-300 leading-relaxed text-justify">
+            {artistTypes[activeIndex].description}
+          </p>
+        </div>
+
+        {/* Key Info Grid */}
+        <div className="grid grid-cols-2 gap-3">
+          <div className="space-y-1 border border-gray-600 rounded-lg p-3">
+            <h4 className="text-xs font-bold text-yellow-400 uppercase">Tools</h4>
+            <p className="text-xs text-gray-300 line-clamp-2">{artistTypes[activeIndex].tools?.split(",")[0]}</p>
+          </div>
+          <div className="space-y-1 border border-gray-600 rounded-lg p-3">
+            <h4 className="text-xs font-bold text-yellow-400 uppercase">Uses</h4>
+            <p className="text-xs text-gray-300 line-clamp-2">{artistTypes[activeIndex].applications?.split(",")[0]}</p>
+          </div>
+        </div>
+
+        {/* Thumbnails - Horizontal Scroll */}
+        <div className="w-full overflow-x-auto scrollbar-hide">
+          <div className="flex gap-3 pb-2">
+            {artistTypes.map((type, index) => {
+              const isActive = index === activeIndex;
+              return (
+                <button
+                  key={type.slug}
+                  onClick={() => setActiveIndex(index)}
+                  className={`flex-shrink-0 w-16 h-16 rounded-full overflow-hidden border-2 transition-all duration-300 ${
+                    isActive ? "border-yellow-400 ring-2 ring-yellow-400" : "border-gray-500"
+                  }`}
+                >
+                  <img src={type.image} alt={type.label} className="w-full h-full object-cover" />
+                </button>
+              );
+            })}
+          </div>
+        </div>
+
+        {/* More Details */}
+        <div className="space-y-3 border-t border-gray-600 pt-4">
+          {artistTypes[activeIndex].techniques && (
+            <div className="space-y-1">
+              <h3 className="text-xs font-black text-yellow-400 uppercase">Techniques</h3>
+              <p className="text-xs text-gray-300 leading-relaxed line-clamp-3">{artistTypes[activeIndex].techniques}</p>
+            </div>
+          )}
+          {artistTypes[activeIndex].keyFeatures && (
+            <div className="space-y-1 border-t border-gray-600 pt-3">
+              <h3 className="text-xs font-black text-yellow-400 uppercase">Key Features</h3>
+              <p className="text-xs text-gray-300 leading-relaxed line-clamp-3">{artistTypes[activeIndex].keyFeatures}</p>
+            </div>
+          )}
+        </div>
+      </div>
+
+      {/* DESKTOP LAYOUT - 3 COLUMN GRID */}
+      <div className="hidden md:grid relative z-10 h-full w-full grid-cols-[1fr_2fr_1fr] gap-8 px-10 py-0 overflow-hidden">
 
         {/* LEFT PANEL – DETAILED INFO */}
         <div className="flex flex-col justify-start items-start gap-4 mt-20 px-3 py-6 h-full overflow-y-auto">
@@ -367,16 +457,6 @@ export default function ArtistTypeScrollPage() {
             <h3 className="text-sm font-bold text-yellow-400 mb-2">KEY FEATURES</h3>
             <p className="text-xs text-gray-100 leading-relaxed">{artistTypes[activeIndex].keyFeatures}</p>
           </div>
-        </div>
-
-        {/* COUNTER */}
-        <div className="absolute bottom-6 right-10 z-50 flex flex-col items-end gap-3">
-
-          {/* Number */}
-          <div className="text-sm tracking-widest text-white">
-            {String(activeIndex + 1).padStart(2, "0")} / {String(artistTypes.length).padStart(2, "0")}
-          </div>
-
         </div>
 
       </div>
