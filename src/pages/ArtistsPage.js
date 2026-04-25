@@ -155,7 +155,8 @@ export default function ArtistsPage() {
       </div>
 
       {/* MAIN CONTENT - MOBILE VERTICAL LAYOUT */}
-      <div className="md:hidden relative z-20 w-full min-h-screen pt-40 pb-4 px-4 flex flex-col gap-4">
+      <div className="md:hidden relative z-20 w-full flex-1 pb-4 px-4 flex flex-col gap-4 overflow-y-auto"
+      style={{ height: 'calc(100vh - 200px)', marginTop: '200px' }}>
         {/* Artist Info */}
         <div className="space-y-3">
           <button
