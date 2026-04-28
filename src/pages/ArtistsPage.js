@@ -177,7 +177,7 @@ export default function ArtistsPage() {
           </button>
 
           <div className="space-y-1">
-            <h1 className="text-2xl font-black line-clamp-2">
+            <h1 className="text-2xl font-black">
               {activeArtist.name}
             </h1>
             <p className="text-sm text-yellow-400 capitalize font-bold">
@@ -244,7 +244,7 @@ export default function ArtistsPage() {
             <div className="space-y-3 border-t border-gray-600 pt-4">
               <div className="space-y-1">
                 <h3 className="text-xs font-black text-yellow-400 uppercase">Title</h3>
-                <p className="text-xs text-gray-300 line-clamp-2">{artworkDetails.title || "Untitled"}</p>
+                <p className="text-xs text-gray-300">{artworkDetails.title || "Untitled"}</p>
               </div>
 
               {artworkDetails.description && (
@@ -270,7 +270,7 @@ export default function ArtistsPage() {
         })()) || (
           <div className="space-y-2 border-t border-gray-600 pt-4">
             <h3 className="text-xs font-black text-yellow-400 uppercase">Overview</h3>
-            <p className="text-xs text-gray-300 line-clamp-4 leading-relaxed">{activeArtist.bio}</p>
+            <p className="text-xs text-gray-300 leading-relaxed">{activeArtist.bio}</p>
           </div>
         )}
       </div>
