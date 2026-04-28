@@ -254,7 +254,7 @@ export default function ArtistTypeScrollPage() {
       </div>
 
       {/* MOBILE LAYOUT - VERTICAL STACKING */}
-      <div className="md:hidden relative z-10 w-full min-h-screen pt-4 pb-6 px-4 flex flex-col gap-4 overflow-y-auto show-scrollbar">
+      <div className="md:hidden relative z-10 w-full pt-4 pb-6 px-4 flex flex-col gap-4 overflow-y-auto show-scrollbar" style={{ height: 'calc(100vh - 128px)' }}>
         {/* Title & Type */}
         <div className="space-y-2 text-center">
           <h2 className="text-2xl font-black">{artistTypes[activeIndex].label}</h2>
