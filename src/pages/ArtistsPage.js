@@ -31,6 +31,15 @@ export default function ArtistsPage() {
     if (!artists.length) return;
 
     const onWheel = (e) => {
+      // Don't navigate if scrolling inside overflow-x-auto containers
+      if (e.target.closest('.overflow-x-auto')) {
+        return;
+      }
+
+      // On mobile (small screens), don't navigate with vertical scroll
+      // Only horizontal scroll (swipe on trackpad) should navigate
+      const isMobile = window.innerWidth < 768;
+
       const now = Date.now();
       const throttleDelay = 500;
 
@@ -44,7 +53,8 @@ export default function ArtistsPage() {
           setActiveIndex((prev) => Math.max(prev - 1, 0));
           lastScrollTimeRef.current = now;
         }
-      } else if (e.deltaY !== 0) {
+      } else if (e.deltaY !== 0 && !isMobile) {
+        // Vertical scroll only navigates on desktop, not mobile
         if (e.deltaY > 0) {
           setActiveIndex((prev) => Math.min(prev + 1, artists.length - 1));
           lastScrollTimeRef.current = now;
@@ -120,13 +130,13 @@ export default function ArtistsPage() {
       onTouchEnd={handleTouchEnd}
     >
       {/* MOBILE BACKGROUND - Top section only */}
-      <div className="md:hidden absolute top-0 left-0 right-0 h-48 z-0 overflow-hidden">
+      <div className="md:hidden absolute top-0 left-0 right-0 h-32 z-0 overflow-hidden">
         <img
           src={activeArtist.image}
           alt="bg-blur"
-          className="w-full h-full object-cover blur-md opacity-60"
+          className="w-full h-full object-cover blur-sm opacity-75"
         />
-        <div className="absolute inset-0 bg-gradient-to-b from-transparent via-black/50 to-black" />
+        <div className="absolute inset-0 bg-gradient-to-b from-transparent via-black/40 to-black/70" />
       </div>
 
       {/* DESKTOP BACKGROUND - Full screen */}
@@ -155,8 +165,8 @@ export default function ArtistsPage() {
       </div>
 
       {/* MAIN CONTENT - MOBILE VERTICAL LAYOUT */}
-      <div className="md:hidden relative z-20 w-full flex-1 pb-4 px-4 flex flex-col gap-4 overflow-y-auto"
-      style={{ height: 'calc(100vh - 200px)', marginTop: '200px' }}>
+      <div className="md:hidden relative z-20 w-full flex-1 pb-4 px-4 flex flex-col gap-4 overflow-y-auto show-scrollbar"
+      style={{ height: 'calc(100vh - 128px)', paddingTop: '8px' }}>
         {/* Artist Info */}
         <div className="space-y-3">
           <button
@@ -192,17 +202,21 @@ export default function ArtistsPage() {
 
           <div className="space-y-1 border-t border-gray-600 pt-2">
             <p className="text-xs text-yellow-400 font-bold uppercase">About</p>
-            <p className="text-xs text-gray-300 line-clamp-3 leading-relaxed">
-              {activeArtist.bio}
-            </p>
+            <div className="overflow-x-auto show-scrollbar">
+              <p className="text-xs text-gray-300 leading-relaxed whitespace-normal">
+                {activeArtist.bio}
+              </p>
+            </div>
           </div>
 
           {activeArtist.education && (
             <div className="space-y-1 border-t border-gray-600 pt-2">
               <p className="text-xs text-yellow-400 font-bold uppercase">Education</p>
-              <p className="text-xs text-gray-300 line-clamp-2 leading-relaxed">
-                {activeArtist.education}
-              </p>
+              <div className="overflow-x-auto show-scrollbar">
+                <p className="text-xs text-gray-300 leading-relaxed whitespace-normal">
+                  {activeArtist.education}
+                </p>
+              </div>
             </div>
           )}
         </div>
@@ -236,7 +250,9 @@ export default function ArtistsPage() {
               {artworkDetails.description && (
                 <div className="space-y-1 border-t border-gray-600 pt-2">
                   <h3 className="text-xs font-black text-yellow-400 uppercase">Description</h3>
-                  <p className="text-xs text-gray-300 line-clamp-3 leading-relaxed">{artworkDetails.description}</p>
+                  <div className="overflow-x-auto show-scrollbar">
+                    <p className="text-xs text-gray-300 leading-relaxed whitespace-normal">{artworkDetails.description}</p>
+                  </div>
                 </div>
               )}
 
