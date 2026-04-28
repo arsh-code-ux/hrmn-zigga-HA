@@ -218,32 +218,6 @@ export default function ArtistsPage() {
           </div>
         </div>
 
-        {/* Mobile Thumbnails - Horizontal Scroll */}
-        <div className="w-full overflow-x-auto scrollbar-hide">
-          <div className="flex gap-3 pb-2 px-2">
-            {artists.map((artist, index) => {
-              const isActive = index === activeIndex;
-              return (
-                <button
-                  key={artist.id}
-                  onClick={() => setActiveIndex(index)}
-                  className={`flex-shrink-0 w-14 h-14 rounded-full overflow-hidden border-2 transition-all duration-300 ${
-                    isActive
-                      ? "border-yellow-400 ring-2 ring-yellow-400"
-                      : "border-gray-500 hover:border-gray-400"
-                  }`}
-                >
-                  <img
-                    src={artist.image}
-                    alt={artist.name}
-                    className="w-full h-full object-cover"
-                  />
-                </button>
-              );
-            })}
-          </div>
-        </div>
-
         {/* Artwork Details for Mobile */}
         {(artworkMeta[activeArtist.slug] && (() => {
           const artworkSlug = Object.keys(artworkMeta[activeArtist.slug])[0];
